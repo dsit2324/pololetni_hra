@@ -52,7 +52,7 @@ class Snowflake {
   draw() {
     if (snowflakeImage) {
       imageMode(CENTER);
-      image(snowflakeImage, this.x, this.y, this.size * 5, this.size * 5);
+      image(snowflakeImage, this.x, this.y, this.size * 7.5, this.size * 7.5);
     } else {
       fill(this.color);
       circle(this.x, this.y, this.size);
