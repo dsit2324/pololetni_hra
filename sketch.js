@@ -4,6 +4,7 @@ let backgroundImage;
 let movingImage;
 let dingSound;
 let pokusny;
+let music; // Přidána proměnná pro hudbu
 
 class Rectangle {
   constructor(x, y) {
@@ -19,7 +20,6 @@ class Rectangle {
   draw() {
     if (movingImage) {
       imageMode(CENTER);
-      // Zmenšení obrázku walter.png na desetinu jeho původní velikosti
       image(movingImage, this.x, this.y, movingImage.width / 3, movingImage.height / 3);
     } else {
       fill(this.color);
@@ -67,16 +67,23 @@ class Snowflake {
 function preload() {
   // Načtení obrázku a zvuku
   movingImage = loadImage('walter.png');
-  snowflakeImage = loadImage('meth.webp'); // Nahraďte správnou URL nebo souborem
-  dingSound = loadSound('ding.wav'); // Nahraďte správnou URL nebo souborem
+  snowflakeImage = loadImage('meth.webp');
+  dingSound = loadSound('ding.wav');
   backgroundImage = loadImage('van.webp');
+  music = loadSound('saul.mp3'); // Načtení hudby
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   pokusny = new Rectangle(500, 300);
-  // První sníh se objeví při startu
   snowflakes.push(new Snowflake());
+
+  // Spuštění hudby na pozadí
+  if (music && music.isLoaded()) {
+    music.loop();
+  } else {
+    console.error("Hudba se nenačetla správně.");
+  }
 }
 
 function draw() {
@@ -96,13 +103,12 @@ function draw() {
       console.log(pokusny.points);
       if (dingSound && dingSound.isLoaded())
         dingSound.play();
-      
-      // Po získání sněhové vločky, vytvoříme novou
-      snowflakes.splice(i, 1);  // Odstraníme tuto vločku
-      snowflakes.push(new Snowflake());  // A přidáme novou
+
+      snowflakes.splice(i, 1);
+      snowflakes.push(new Snowflake());
     }
     if (snowflakes[i].y > height + 20) {
-      snowflakes.splice(i, 1);  // Pokud sníh spadne mimo obrazovku, odstraníme ho
+      snowflakes.splice(i, 1);
       snowflakes.push(new Snowflake());
     }
   }
@@ -120,11 +126,11 @@ function draw() {
     pokusny.move(0, 1);
   }
 
-// Zobrazení skóre v pravém horním rohu
-fill(255);  // Bíla barva pro text
-textSize(32);  // Velikost textu
-textAlign(LEFT, TOP);  // Zarovnání textu do pravého horního rohu
-text("Skóre: " + pokusny.points, 20, 20);  // Vykreslí skóre v pravém horním rohu
+  // Zobrazení skóre v pravém horním rohu
+  fill(255);
+  textSize(32);
+  textAlign(LEFT, TOP);
+  text("Skóre: " + pokusny.points, 20, 20);
 
   pokusny.draw();
 }
