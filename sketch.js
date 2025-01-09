@@ -68,7 +68,7 @@ function preload() {
   // Načtení obrázku a zvuku
   movingImage = loadImage('walter.png');
   snowflakeImage = loadImage('meth.webp');
-  dingSound = loadSound('ding.wav');
+  dingSound = loadSound('kolize.mp3');
   backgroundImage = loadImage('van.webp');
   music = loadSound('saul.mp3'); // Načtení hudby
 }
@@ -80,6 +80,7 @@ function setup() {
 
   // Spuštění hudby na pozadí
   if (music && music.isLoaded()) {
+    music.setVolume(0.5);
     music.loop();
   } else {
     console.error("Hudba se nenačetla správně.");
@@ -102,6 +103,7 @@ function draw() {
       pokusny.points++;
       console.log(pokusny.points);
       if (dingSound && dingSound.isLoaded())
+        dingSound.setVolume(5.0);
         dingSound.play();
 
       snowflakes.splice(i, 1);
