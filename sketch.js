@@ -1,12 +1,12 @@
-const end = 10;
+const end = 10; // Počet bodů k ukončení hry
 let images = [];
 let collectImage;
 let backgroundImage;
 let movingImage;
 let collisionSound;
 let pokusny;
-let music; // Přidána proměnná pro hudbu
-let gameOver = false; // Proměnná pro sledování stavu hry
+let music; // Hudba na pozadí
+let gameOver = false; // Stav hry
 
 class Rectangle {
   constructor(x, y) {
@@ -37,8 +37,7 @@ class Rectangle {
   }
 
   detectCollision(image) {
-    return collideRectCircle(this.x, this.y, this.width, this.height, 
-      image.x, image.y, image.size);
+    return collideRectCircle(this.x, this.y, this.width, this.height, image.x, image.y, image.size);
   }
 }
 
@@ -67,12 +66,11 @@ class Obrazek {
 }
 
 function preload() {
-  // Načtení obrázku a zvuku
   movingImage = loadImage('walter.png');
   collectImage = loadImage('meth.webp');
   collisionSound = loadSound('kolize.mp3');
   backgroundImage = loadImage('van.webp');
-  music = loadSound('saul.mp3'); // Načtení hudby
+  music = loadSound('saul.mp3'); // Hudba na pozadí
 }
 
 function setup() {
@@ -83,36 +81,30 @@ function setup() {
   // Spuštění hudby na pozadí
   if (music && music.isLoaded()) {
     music.setVolume(0.1);
-    music.loop();
+    music.loop(); // Přehrává hudbu opakovaně
   } else {
     console.error("Hudba se nenačetla správně.");
   }
 }
 
 function draw() {
-  // Pokud hra skončila, nezobrazuje nic jiného
+  // Pokud hra skončila
   if (gameOver) {
-    // Nastavení barvy pro obdélník (např. červený okraj a průhledný vnitřek)
-    fill(0); // Poloprůhledný červený
-    stroke(255);  // Bílý okraj
+    // Zastavení hudby, pokud stále hraje
+    if (music && music.isPlaying()) {
+      music.stop(); // Zastavení hudby
+    }
 
-    // Vykreslení obdélníku kolem textu
-    let textWidthValue = textWidth("You have won!") + 40; // Šířka textu + okraje
-    let textHeightValue = 64 + 20; // Výška textu + okraje
-    let rectX = width / 2 - textWidthValue / 2;
-    let rectY = height / 2 - textHeightValue / 2;
-
-    rect(rectX, rectY, textWidthValue, textHeightValue); // Vykreslí obdélník
-
-    // Zobrazení textu "HRA SKONČILA"
-    fill(255); // Bílá barva pro text
+    // Pozadí a zpráva o vítězství
+    background(0);
+    fill(255);
     textSize(32);
     textAlign(CENTER, CENTER);
     text("You have won!", width / 2, height / 2);
-
-    return; // Zastaví vykreslování
+    return; // Konec vykreslování
   }
 
+  // Hlavní část hry
   if (backgroundImage) {
     imageMode(CORNER);
     image(backgroundImage, 0, 0, width, height);
@@ -120,7 +112,7 @@ function draw() {
     background(20);
   }
 
-  // Aktualizace methu
+  // Aktualizace a vykreslení obrazků
   for (let i = 0; i < images.length; i++) {
     images[i].update();
     images[i].draw();
@@ -128,9 +120,9 @@ function draw() {
       pokusny.points++;
       console.log(pokusny.points);
 
-      // Kontrola, zda hráč nasbíral 20 bodů
+      // Kontrola, zda hráč dosáhl cíle
       if (pokusny.points >= end) {
-        gameOver = true; // Pokud ano, hra skončí
+        gameOver = true; // Nastavení konce hry
       }
 
       if (collisionSound && collisionSound.isLoaded()) {
@@ -138,42 +130,39 @@ function draw() {
         collisionSound.play();
       }
 
-      images.splice(i, 1); // Odstranění methu, ktery byl sebrán
-      images.push(new Obrazek()); // Vytvoření nového methu
+      images.splice(i, 1);
+      images.push(new Obrazek());
     }
     if (images[i].y > height + 20) {
-      images.splice(i, 1);  // Pokud meth spadne mimo obrazovku, odstraníme ji
+      images.splice(i, 1);
       images.push(new Obrazek());
     }
   }
 
-  // Kontrola pohybu pouze, pokud hra neskončila
-  if (!gameOver) {
-    if (keyIsDown(LEFT_ARROW)) {
-      pokusny.move(-1, 0);
-    }
-    if (keyIsDown(RIGHT_ARROW)) {
-      pokusny.move(1, 0);
-    }
-    if (keyIsDown(UP_ARROW)) {
-      pokusny.move(0, -1);
-    }
-    if (keyIsDown(DOWN_ARROW)) {
-      pokusny.move(0, 1);
-    }
+  // Pohyb hráče
+  if (keyIsDown(LEFT_ARROW)) {
+    pokusny.move(-1, 0);
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    pokusny.move(1, 0);
+  }
+  if (keyIsDown(UP_ARROW)) {
+    pokusny.move(0, -1);
+  }
+  if (keyIsDown(DOWN_ARROW)) {
+    pokusny.move(0, 1);
   }
 
-  // Zobrazení skóre v pravém horním rohu
+  // Zobrazení skóre
   fill(255);
   textSize(32);
   textAlign(LEFT, TOP);
   text("Score: " + pokusny.points, 20, 20);
 
-  fill(255);
-  textSize(32);
+  // Zobrazení cíle hry
   textAlign(CENTER, TOP);
-  text("The goal of the game is to collect "  + end + " meths.", windowWidth / 2, 20);
+  text("The goal of the game is to collect " + end + " meths.", width / 2, 20);
 
-
+  // Vykreslení hráče
   pokusny.draw();
 }
