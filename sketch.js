@@ -155,6 +155,8 @@ function draw() {
 
   // Zobrazení skóre
   fill(255);
+  stroke(0);
+  strokeWeight(4);
   textSize(32);
   textAlign(LEFT, TOP);
   text("Score: " + pokusny.points, 20, 20);
