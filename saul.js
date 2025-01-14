@@ -1,4 +1,4 @@
-const end = 20; // Počet bodů k ukončení hry
+const end = 10; // Počet bodů k ukončení hry
 let images = [];
 let collectImage;
 let backgroundImage;
